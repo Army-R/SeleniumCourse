@@ -1,4 +1,4 @@
-# Selenium Course for Beninners 
+# Selenium Course for Beginners 
 
 - Web Scraping 
 - Bots 

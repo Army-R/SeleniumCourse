@@ -53,7 +53,7 @@ class Booking(webdriver.Edge):
         if selected_currency.text != code:
             raise Exception(f'Currency did not change to {code}') # Default is USD
         
-    def destination_form(self, city='Guadalajara'):
+    def destination_field(self, city='Guadalajara'):
         # Wait for the form and enter destination
         destination = WebDriverWait(self, 10).until(
             EC.presence_of_element_located((By.NAME, 'ss'))
@@ -73,18 +73,68 @@ class Booking(webdriver.Edge):
             
             else False
         )
-        time.sleep(2) # Wait before clicking destination
-
         destination_results.click()
 
-        time.sleep(2) # Wait before clikking on the date picker
+    def pick_dates(self, checkin_date, checkout_date):
 
-        # Click on the date picker and Wait for the calendar to load
-        date = WebDriverWait(self, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[data-testid="searchbox-dates-container"]'))
-        )
-        date.click()
-
+        # Wait for the date picker to be visible
         calendar = WebDriverWait(self, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'div[data-testid="searchbox-datepicker"]'))
         )
+
+        # Select check-in date
+        self.find_element(By.CSS_SELECTOR, f'td[role="gridcell"] span[data-date="{checkin_date}"]').click()
+
+        # Select check-out date
+        self.find_element(By.CSS_SELECTOR, f'td[role="gridcell"] span[data-date="{checkout_date}"]').click()
+
+    def occupancy(self, adults=3, children=0, rooms=2):
+        # Click on the occupancy button
+        self.find_element(By.CSS_SELECTOR, 'button[data-testid="occupancy-config"]').click()
+
+        # Wait for the occupancy modal to appear
+        occupancy_modal = WebDriverWait(self, 10).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, 'e484bb5b7a'))
+        )
+
+        # Decrease adults to 1 before setting desired number
+        while True:
+            decrease_adults_button = occupancy_modal[0].find_elements(By.CSS_SELECTOR, 'button.de576f5064')[0]
+            decrease_adults_button.click()
+
+            adults_value = occupancy_modal[0].find_element(By.CLASS_NAME, 'e32aa465fd')
+            
+            if int(adults_value.text) == 1:
+                break
+
+        # Set adults
+        adults_button = occupancy_modal[0].find_element(By.CSS_SELECTOR, 'button[class="de576f5064 b46cd7aad7 e26a59bb37 c295306d66 c7a901b0e7 aaf9b6e287 dc8366caa6"]')
+        for _ in range(adults - 1):
+            adults_button.click() # Default is 3 adults.
+        
+        # Set children
+        children_button = occupancy_modal[1].find_element(By.CSS_SELECTOR, 'button[class="de576f5064 b46cd7aad7 e26a59bb37 c295306d66 c7a901b0e7 aaf9b6e287 dc8366caa6"]')
+        for _ in range(children):
+            children_button.click() # Default is 0 children
+        
+        # Set rooms
+        rooms_button = occupancy_modal[2].find_element(By.CSS_SELECTOR, 'button[class="de576f5064 b46cd7aad7 e26a59bb37 c295306d66 c7a901b0e7 aaf9b6e287 dc8366caa6"]')
+        for _ in range(rooms - 1):  
+            rooms_button.click() # Default is 2 rooms.
+        
+        # Validate occupancy selection
+        occupancy_button_label = self.find_element(By.CSS_SELECTOR, 'button[data-testid="occupancy-config"]').get_attribute('aria-label')
+
+        if occupancy_button_label != f'Número de personas y de habitaciones. Selección actual: {adults} adultos · {children} niños · {rooms} habitaciones':
+            raise Exception('Occupancy selection did not update correctly')
+        
+    def search(self):
+        # Click the search button
+        self.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
+
+        # Validate that the search results page has loaded
+        search_results = WebDriverWait(self, 10).until(
+            EC.url_contains('searchresults')
+        )
+        if not search_results:
+            raise Exception('Search failed')

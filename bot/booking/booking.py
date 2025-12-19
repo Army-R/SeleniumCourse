@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import booking.constants as const
+from booking.booking_filtration import BookingFilter
 
 # Create a new class for booking
 class Booking(webdriver.Edge):
@@ -138,3 +139,9 @@ class Booking(webdriver.Edge):
         )
         if not search_results:
             raise Exception('Search failed')
+
+    # Filter results    
+    def apply_filters(self):
+        filtration = BookingFilter(driver=self)
+        filtration.filter_by_star(3, 4)
+        filtration.filter_by_lowest_price()

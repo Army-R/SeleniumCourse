@@ -1,7 +1,7 @@
 # Import necessary modules
 from booking.booking import Booking
 
-with Booking(teardown=True) as bot:
+with Booking() as bot:
     bot.land_first_page()
     bot.close_login_popup()
     bot.change_currency() 
@@ -9,3 +9,4 @@ with Booking(teardown=True) as bot:
     bot.pick_dates('2025-12-21', '2026-01-12')
     bot.occupancy() 
     bot.search() 
+    bot.apply_filters()

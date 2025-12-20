@@ -20,9 +20,7 @@ class BookingFilter:
             for star_rating in star_ratings_options.find_elements(By.TAG_NAME, 'input'):
                 if str(star_rating.get_attribute('value')).strip() == f'class={star}':
                     star_rating.click()
-                else:
-                    continue
-
+        
     def filter_by_lowest_price(self):
         # Find and click on the dropdown at the top
         filter_dropdown = WebDriverWait(self.driver, 10).until(

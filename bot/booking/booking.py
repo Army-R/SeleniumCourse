@@ -155,5 +155,6 @@ class Booking(webdriver.Edge):
         results = WebDriverWait(self, 10).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'div[data-testid="property-card"]'))
         )
+        
         hotel = BookingResults(results)
-        print(hotel.loop_through_results())
+        hotel.loop_through_results()

@@ -5,12 +5,15 @@ with Booking(teardown=True) as bot:
     bot.land_first_page()
     bot.close_login_popup()
     bot.change_currency() 
-    bot.destination_field()
+    bot.destination_field(input('Where are you going to? '))
     bot.pick_dates(
-        '2025-12-21', 
-        '2026-01-12'
+        checkin_date=input('Enter check-in date (YYYY-MM-DD): '), 
+        checkout_date=input('Enter check-out date (YYYY-MM-DD): ')
     )
-    bot.occupancy() 
+    bot.occupancy(
+        adults=int(input('Number of adults: ')), 
+        rooms=int(input('Number of rooms: '))
+    ) 
     bot.search() 
     bot.apply_filters()
     bot.display_results()

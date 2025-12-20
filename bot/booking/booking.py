@@ -150,7 +150,7 @@ class Booking(webdriver.Edge):
         filtration.filter_by_star(3, 4)
         filtration.filter_by_lowest_price()
     
-    # Wait for the results data to load
+    # Wait for the results data to load, then display them
     def display_results(self):
         results = WebDriverWait(self, 10).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'div[data-testid="property-card"]'))

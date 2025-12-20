@@ -6,13 +6,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import booking.constants as const
 from booking.booking_filtration import BookingFilter
+from booking.booking_results import BookingResults
 
 # Create a new class for booking
 class Booking(webdriver.Edge):
     def __init__(self, teardown=False):
         self.teardown = teardown # Controls whether to quit the browser on exit
+        # Supress DevTools Errors
+        options = webdriver.EdgeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         # Initialize the Edge WebDriver
-        super(Booking, self).__init__()
+        super(Booking, self).__init__(options=options)
         self.maximize_window()
 
     def __exit__(self, *_):
@@ -145,3 +149,11 @@ class Booking(webdriver.Edge):
         filtration = BookingFilter(driver=self)
         filtration.filter_by_star(3, 4)
         filtration.filter_by_lowest_price()
+    
+    # Wait for the results data to load
+    def display_results(self):
+        results = WebDriverWait(self, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'div[data-testid="property-card"]'))
+        )
+        hotel = BookingResults(results)
+        print(hotel.loop_through_results())

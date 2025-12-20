@@ -6,7 +6,15 @@ with Booking() as bot:
     bot.close_login_popup()
     bot.change_currency() 
     bot.destination_field()
-    bot.pick_dates('2025-12-21', '2026-01-12')
+    bot.pick_dates(
+        '2025-12-21', 
+        '2026-01-12'
+    )
     bot.occupancy() 
     bot.search() 
     bot.apply_filters()
+    bot.display_results()
+
+
+if __name__ == '__main__':
+    pass    
